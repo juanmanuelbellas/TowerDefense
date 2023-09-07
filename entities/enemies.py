@@ -1,21 +1,22 @@
 import pygame
 import math
 from entities.entity import Entity
+from entities.bullet import Proyectiles
 
 
 class Enemy(Entity):
     def __init__(self, color, life_points, game, x=1000, y=300):
         super().__init__(life_points=life_points, x=x, y=y)
         self.game = game
+        self.id="entities"
         self.color = color
         self.width = 100
         self.height = 100
         self.x = x
         self.y = y
-        self.rect = pygame.Rect(x, y, self.width, self.height)
-        self.speed = 5/60
-        self.dx = (self.x - game.player.x) / self.speed
-        self.dy = (self.y - game.player.y) / self.speed
+        self.rect = pygame.Rect(x-self.width/2, y-self.height/2, self.width, self.height)
+        self.cantupdates=0
+        self.speed = 1
 
     def calc_direction_speed(self):
         distancia = math.sqrt(
@@ -30,9 +31,22 @@ class Enemy(Entity):
 
     def update(self):
         self.calc_direction_speed()
-
+        self.cantupdates+=1
         self.x += self.vx_enemy
         self.y += self.vy_enemy
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        if self.x <= self.game.player.x + 100:
+        self.shoot()
+        if self.life_points<=0:
             self.game.entities.remove(self)
+        if (self.calc_distance_between(self,self.game.player))<=100:
+            self.game.entities.remove(self)
+        NearBullet=self.MasCercano(self,self.game.bullets)
+
+    
+    def shoot(self): 
+        if (self.cantupdates%50)==0:
+                bullet=Proyectiles("black",1,self.game,self.game.player,self.x+self.width/2, self.y+self.height/2)
+                self.game.bullets.append(bullet)
+    
+
+

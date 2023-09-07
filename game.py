@@ -11,8 +11,12 @@ class Game:
         self.height = height
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
+        self.ticks=pygame.time.get_ticks()
         self.running = True
         self.entities = []
+        self.secondary_towers = [] 
+        self.bullets=[] # List to store secondary towers
+        self.cantupdates=0
 
         # Initialize Pygame
         pygame.init()
@@ -32,11 +36,11 @@ class Game:
         # Create a MainTower object and set its game attribute
         self.player = MainTower((50, 125, 207), x=300, y=300, life_points=100)
 
-        self.secondary_towers = []  # List to store secondary towers
+
 
         # Create SecondaryTower limit
         self.tower_placement_limit = 1
-        self.tower_placement_cooldown = 20000
+        self.tower_placement_cooldown = 20
         self.last_tower_placement_time = 0
 
     def handle_events(self):
@@ -52,7 +56,7 @@ class Game:
 
                     # Create a SecondaryTower object at the mouse click position
                     secondary_tower = SecondaryTower(
-                        (64, 50, 66), x=mouse_x, y=mouse_y, life_points=50)
+                        (64, 50, 66), x=mouse_x, y=mouse_y, life_points=50, game=self)
                     self.secondary_towers.append(secondary_tower)
                     self.last_tower_placement_time = current_time
                 else:
@@ -75,14 +79,20 @@ class Game:
     def render(self):
         self.screen.fill((204, 193, 163))  # Background color
         # Render game here
+
         for entity in self.entities:
             entity.update()
             entity.draw()
         self.player.draw(self.screen)  # Pass the screen to the draw method
         # Render secondary towers
+        for bullet in self.bullets:
+            bullet.update()
+            bullet.draw()
+
         for secondary_tower in self.secondary_towers:
             # Pass the screen to the draw method
             secondary_tower.draw(self.screen)
+            secondary_tower.update()
 
         # Check if it's time to display the welcome message
         current_time = pygame.time.get_ticks()
@@ -114,6 +124,7 @@ class Game:
 
     def run(self):
         while self.running:
+            self.cantupdates+=1
             self.handle_events()
             self.render()
             self.clock.tick(60)

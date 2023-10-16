@@ -14,6 +14,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
         self.connection = Client("tituela.servebeer.com", 7173)
         self.events = []
+        self.entities = []
 
 
     def handle_input(self):
@@ -25,9 +26,17 @@ class Game:
                 x, y = pygame.mouse.get_pos()
                 self.events.append(ClickEvent(event.button, x,y))
 
+    def drawRect(entity):
+        rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
+        color = "red"
+        pygame.draw.rect(self.screen, color, rect, border_radius=15)
 
     def render(self):
         self.screen.fill((204, 193, 163))
+        for entity in self.entities:
+            self.drawRect(entity)
+
+
         pygame.display.flip()
 
 
@@ -40,6 +49,7 @@ class Game:
 
     def run(self):
         while self.running:
+            self.entities = self.connection.entities
             self.handle_input()
             self.send()
             self.render()

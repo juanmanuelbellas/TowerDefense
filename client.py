@@ -3,8 +3,8 @@ import socket
 import pickle
 
 # Configuración del cliente
-host = '127.0.0.1'
-port = 1234
+host = 'tituela.servebeer.com'
+port = 27960 
 
 # Inicializa el socket del cliente
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

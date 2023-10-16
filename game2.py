@@ -14,7 +14,7 @@ class Game:
 
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
         
-        self.connection = Client("127.0.0.1", 1234)
+        self.connection = Client("tituela.servebeer.com", 7173)
         self.events = []
 
         pygame.init()

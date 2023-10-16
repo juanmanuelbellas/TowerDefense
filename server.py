@@ -3,8 +3,8 @@ import pickle
 import threading
 
 # Configuración del servidor
-host = '127.0.0.1'
-port = 1234
+host = "0.0.0.0"
+port = 7173
 
 # Inicializa el socket del servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

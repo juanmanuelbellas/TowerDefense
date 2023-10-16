@@ -3,8 +3,8 @@ import math
 
 
 class Entity():
-    def __init__(self, life_points, x, y) -> None:
-        self.life_points = life_points
+    def __init__(self, hit_points, x, y) -> None:
+        self.hit_points = hit_points
         self.x = x
         self.y = y
 
@@ -15,7 +15,7 @@ class Entity():
         return distancia
     
     def MasCercano(self,A,B):
-        Target=Entity(life_points=1,x=1000000,y=1000000)
+        Target=Entity(hit_points=1,x=1000000,y=1000000)
         for b in B:
             if self.calc_distance_between(A,b)<self.calc_distance_between(A,Target):
                 Target=b
@@ -23,4 +23,4 @@ class Entity():
         return Target
 
     def Getdamage(self,A,damage):
-        A.life_points = A.life_points-damage
+        A.hit_points = A.hit_points-damage

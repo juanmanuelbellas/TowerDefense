@@ -6,19 +6,13 @@ from events.input import ClickEvent
 
 class Game:
     def __init__(self):
-        
         self.running = True
-
         self.screen_width = 800
         self.screen_height = 600
-
-        self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        
-        self.connection = Client("127.0.0.1", 1234)
-        self.events = []
-
         pygame.init()
-   
+        self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
+        self.connection = Client("tituela.servebeer.com", 7173)
+        self.events = []
 
 
     def handle_input(self):
@@ -29,12 +23,11 @@ class Game:
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
                 self.events.append(ClickEvent(event.button, x,y))
-   
 
 
     def render(self):
-        self.screen.fill((204,193,163))
-   
+        self.screen.fill((204, 193, 163))
+        pygame.display.flip()
 
 
     def send(self):
@@ -49,6 +42,7 @@ class Game:
             self.handle_input()
             self.send()
             self.render()
+            
 
 if __name__ == "__main__":
    game = Game()

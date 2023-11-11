@@ -6,9 +6,11 @@ from events.input import ClickEvent
 from entities.enemies import EnemyFactory
 
 class EntityToSend:
-    def __init__(self):
-        self.x = 600
-        self.y = 300
+    def __init__(self,x,y,w,h):
+        self.x = x
+        self.y = y
+        self.width = w
+        self.height = h
         self.uuid = uuid.uuid4
 
 class Game:
@@ -32,9 +34,9 @@ class Game:
                 self.connection.close()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                self.entities_to_send.append(EntityToSend())
+                self.entities_to_send.append(EntityToSend(x,y,100,100))
 
-    def drawRect(entity):
+    def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
         color = "red"
         pygame.draw.rect(self.screen, color, rect, border_radius=15)
@@ -52,6 +54,7 @@ class Game:
         if len(self.entities_to_send) >= 1:
             for entity in self.entities_to_send:
                 self.connection.send(entity)
+                self.entities_to_send.remove(entity)
    
 
     def run(self):

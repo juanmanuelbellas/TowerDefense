@@ -13,9 +13,11 @@ server_socket.bind((host, port))
 server_socket.listen(5)
 
 class EntityToSend:
-    def _init_(self):
+    def _init_(self, x,y,w,h):
         self.x = 600
         self.y = 300
+        self.width = w
+        self.height = h
         self.uuid = uuid.uuid4
 
 class GameServer:
@@ -40,7 +42,8 @@ def handle_client(client_socket):
         client_socket.send(serialized_data)
 
     def update():
-        send(game.entities)
+        for entity in game.entities_recieved:
+            send(entity)
 
     def load_object(entities_recieved):
         for entity_recieved in game.entities_recieved:

@@ -31,15 +31,18 @@ class Entity:
         self.x = x
         self.y = y
         self.uuid = uuid
-
+clients = []
 # Function to handle each client
 def handle_client(client_socket):
     def send(what):
         data_to_send = what
 
         serialized_data = pickle.dumps(data_to_send)
+        
 
-        client_socket.send(serialized_data)
+        
+        for c in clients:
+            c.send(serialized_data)
 
     def update():
         for entity in game.entities_recieved:
@@ -76,11 +79,15 @@ def handle_client(client_socket):
     client_socket.close()
    
 # Accept incoming connections and spawn a thread for each client
-while True:
-    client, addr = server_socket.accept()
-    print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
-
-    # Create a new thread for each client
-    client_thread = threading.Thread(target=handle_client, args=(client,))
-    client_thread.start()
+try:
+    while True:
+        client, addr = server_socket.accept()
+        print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
+        clients.append(client)
+        # Create a new thread for each client
+        client_thread = threading.Thread(target=handle_client, args=(client,))
+        client_thread.start()
+finally:
+    for c in clients:
+        c.close()
         

@@ -3,7 +3,7 @@ import socket
 import pickle
 
 # Configuración del cliente
-host = 'tituela.servebeer.com'
+host = '167.56.242.96'
 port = 27960 
 
 # Inicializa el socket del cliente

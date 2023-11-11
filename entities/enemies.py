@@ -2,14 +2,14 @@ import pygame
 from entities.entity import Entity
 
 
-class Enemy(Entity) -> Enemy:
+class Enemy(Entity):
     """
     A class representing enemies in the game. It inherits from the Entity
     class the position(x, y), UUID and the hit_points parameters.
     """
-    def __init__(self, game, x=1000, y=300, color, hit_points: int, speed: float, 
+    def __init__(self, game, color, hit_points: int, speed: float, 
                 range: int, ammo: str, damage: int, attack_speed: float, weakness: str,
-                cost: int, level=1):
+                cost: int, x=1000, y=300, level=1):
         """
         Initialize an enemy object.
 
@@ -72,16 +72,16 @@ class EnemyFactory:
             Enemy: an instance of the created enemy.
         """
         if enemy_type == "goblin":
-            return Enemy(game, x, y, color=("green"), hit_points=50, speed=3.0, 
+            return Enemy(game=game, x=x, y=y, color=("green"), hit_points=50, speed=3.0, 
                          range=80, ammo="normal", damage=10, attack_speed=0.35, weakness="fire",
                          cost=100, level=1)
         
         elif enemy_type == "orc":
-            return Enemy(game, x, y, color=("grey"), hit_points=120, speed=1.8, 
+            return Enemy(game=game, x=x, y=y, color=("grey"), hit_points=120, speed=1.8, 
                          range=15, ammo="pierce", damage=22, attack_speed=0.20, weakness="fire",
                          cost=300, level=1)
         
         elif enemy_type == "troll":
-            return Enemy(game, x, y, color=("brown"), hit_points=250, speed=1.0, 
+            return Enemy(game=game, x=x, y=y, color=("brown"), hit_points=250, speed=1.0, 
                          range=15, ammo="blunt", damage=40, attack_speed=0.1, weakness="pierce",
                          cost=300, level=1)

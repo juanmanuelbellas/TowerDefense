@@ -1,8 +1,15 @@
 import pygame
+import uuid
 
 from connection import Client
 from events.input import ClickEvent
+from entities.enemies import EnemyFactory
 
+class EntityToSend:
+    def __init__(self):
+        self.x = 600
+        self.y = 300
+        self.uuid = uuid.uuid4
 
 class Game:
     def __init__(self):
@@ -12,9 +19,10 @@ class Game:
 
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.connection = Client("tituela.servebeer.com", 7173)
+        self.connection = Client("167.56.242.96", 27960)
         self.events = []
         self.entities = []
+        self.entities_to_send = []
 
 
     def handle_input(self):
@@ -24,7 +32,7 @@ class Game:
                 self.connection.close()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                self.events.append(ClickEvent(event.button, x,y))
+                self.entities_to_send.append(EntityToSend())
 
 
     def render(self):
@@ -33,8 +41,8 @@ class Game:
 
 
     def send(self):
-        if len(self.entities) >= 1:
-            for entity in self.entities:
+        if len(self.entities_to_send) >= 1:
+            for entity in self.entities_to_send:
                 self.connection.send(entity)
    
 

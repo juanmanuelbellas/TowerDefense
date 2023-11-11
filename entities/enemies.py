@@ -5,7 +5,7 @@ from entities.entity import Entity
 class Enemy(Entity) -> Enemy:
     """
     A class representing enemies in the game. It inherits from the Entity
-    class the position(x, y) and the hit_points parameters.
+    class the position(x, y), UUID and the hit_points parameters.
     """
     def __init__(self, game, x=1000, y=300, color, hit_points: int, speed: float, 
                 range: int, ammo: str, damage: int, attack_speed: float, weakness: str,
@@ -16,6 +16,7 @@ class Enemy(Entity) -> Enemy:
         Args:
             game (Game): The game instance.
             x (int): The x-coordinate of the enemy's starting position.
+            y (int): The y-coordinate of the enemy's starting position.
             color: The color of the enemy.
             hit_points (int): The hit points of the enemy.
             speed (float): The movement speed of the enemy.
@@ -29,7 +30,7 @@ class Enemy(Entity) -> Enemy:
         """
         super().__init__(hit_points=hit_points, x=x, y=y)
         self.game = game
-        self.id = "Entities"
+        self.type = "Entities"
         self.color = color
         self.width = 40
         self.height = 40

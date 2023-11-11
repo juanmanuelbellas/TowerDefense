@@ -1,9 +1,11 @@
 import pygame
 import math
+import uuid
 
 
 class Entity():
     def __init__(self, hit_points, x, y) -> None:
+        self.uuid = uuid.uuid4()
         self.hit_points = hit_points
         self.x = x
         self.y = y

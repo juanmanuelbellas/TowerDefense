@@ -14,6 +14,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
         self.connection = Client("tituela.servebeer.com", 7173)
         self.events = []
+        self.entities = []
 
 
     def handle_input(self):
@@ -32,10 +33,9 @@ class Game:
 
 
     def send(self):
-        if len(self.events) >= 1:
-            for event in self.events:
-                self.connection.send(event)
-                self.events.remove(event)
+        if len(self.entities) >= 1:
+            for entity in self.entities:
+                self.connection.send(entity)
    
 
     def run(self):

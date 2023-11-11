@@ -12,7 +12,7 @@ class Game:
 
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.connection = Client("tituela.servebeer.com", 7173)
+        self.connection = Client("localhost", 7173)
         self.events = []
         self.entities = []
 

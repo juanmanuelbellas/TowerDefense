@@ -5,24 +5,30 @@ import threading
 
 # Configuración del servidor
 host = "0.0.0.0"
-port = 7173
+port = 27960
 
 # Inicializa el socket del servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((host, port))
 server_socket.listen(5)
 
+class EntityToSend:
+    def _init_(self):
+        self.x = 600
+        self.y = 300
+        self.uuid = uuid.uuid4
+
 class GameServer:
     def __init__(self):
         self.entities=[]
+        self.entities_recieved = []
 
 game = GameServer()
 class Entity:
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        self.uuid = uuid
 
 # Function to handle each client
 def handle_client(client_socket):
@@ -34,8 +40,20 @@ def handle_client(client_socket):
         client_socket.send(serialized_data)
 
     def update():
-        send(game)
+        send(game.entities)
 
+    def load_object(entities_recieved):
+        for entity_recieved in game.entities_recieved:
+            for entity in game.entities:
+                if entity.uuid == entity_recieved.uuid:
+                    entity.x = entity_recieved.x
+                    entity.y = entity_recieved.y
+                    entity.width = entity.width
+                    entity.height = entity.height
+                else:
+                    game.entities.append(entity_recieved)
+            
+                     
     while True:
      # Receive the serialized data
         data = client_socket.recv(1024)
@@ -47,8 +65,9 @@ def handle_client(client_socket):
         received_object = pickle.loads(data)
 
         # Perform some operation with the received object
-        print(f"Objeto recibido del cliente: {received_object.x}")
-        game.entities.append({'x': received_object.x,'y':received_object.y,'width':100,'height':100})
+        print(f"Objeto recibido del cliente: {received_object}")
+        game.entities_recieved.append(received_object)
+        
         update()
     
     client_socket.close()

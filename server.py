@@ -2,48 +2,76 @@ import socket
 import pickle
 import threading
 
+from connection import EntityToSend
+
 
 # Configuración del servidor
 host = "0.0.0.0"
-port = 27960
+port = 1234
 
 # Inicializa el socket del servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind((host, port))
 server_socket.listen(5)
 
-class EntityToSend:
-    def _init_(self, x,y,w,h):
-        self.x = 600
-        self.y = 300
-        self.width = w
-        self.height = h
-        self.uuid = uuid.uuid4
+
+clients = []
+
+def serialize(data):
+    data_to_send = data
+    return pickle.dumps(data_to_send)
 
 class GameServer:
+
     def __init__(self):
         self.entities=[]
         self.entities_recieved = []
+        self.entities_to_send = []
+    
+    def new_entity(self,entity):
+        entity.is_new = False
+        
+        self.entities_to_send.append(entity)
+        self.entities.append(entity)
+        self.update()
+    
+    def mod_entity(self,entity):
+        for e in self.entities:
+            if e.uuid == entity.uuid:
+                e.x = entity.x
+                e.y = entity.y
+                e.width = entity.width
+                e.height = entity.height
+                e.color = entity.color
+                e.is_mod = False
+            else:
+                print(f"Entidad no encontrada")
+    
+    def handle_recieved_entity(self, entity):
+        if entity.is_new == True:
+            self.new_entity(entity)
+        elif entity.is_mod == True:
+            self.mod_entity(entity)
+    
+    def update(self):
+        print(clients)
+        for c in clients:
+            data = serialize(self.entities_to_send)
+            c.send(data)
+            print(f"Entidades enviadas")
+        self.entities_to_send = [];
 
 game = GameServer()
+
+
+
 class Entity:
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y
         self.uuid = uuid
-clients = []
 # Function to handle each client
 def handle_client(client_socket):
-    def serialize(data):
-        data_to_send = data
-        return pickle.dumps(data_to_send)
-
-    def update():
-        for c in clients:
-            for e in game.entities_recieved:
-                data = serialize(game.entities_recieved)
-                c.send(data)
-                print(f"Entidades enviadas")
 
     def load_object(entities_recieved):
         for entity_recieved in game.entities_recieved:
@@ -69,9 +97,9 @@ def handle_client(client_socket):
 
         # Perform some operation with the received object
         print(f"Objeto recibido del cliente: {received_object}")
-        game.entities_recieved.append(received_object)
+        game.handle_recieved_entity(received_object)
         
-        update()
+        
     
     clients.remove(client_socket)
     client_socket.close()

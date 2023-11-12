@@ -1,17 +1,10 @@
 import pygame
 import uuid
 
-from connection import Client
+from connection import Client, EntityToSend
 from events.input import ClickEvent
 from entities.enemies import EnemyFactory
 
-class EntityToSend:
-    def __init__(self,x,y,w,h):
-        self.x = x
-        self.y = y
-        self.width = w
-        self.height = h
-        self.uuid = uuid.uuid4
 
 class Game:
     def __init__(self):
@@ -21,7 +14,7 @@ class Game:
 
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.connection = Client("167.56.242.96", 27960)
+        self.connection = Client("127.0.0.1", 1234)
         self.entities = []
         self.entities_to_send = []
 
@@ -33,7 +26,7 @@ class Game:
                 self.connection.close()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                self.entities_to_send.append(EntityToSend(x,y,100,100))
+                self.entities_to_send.append(EntityToSend(x,y,100,100, color="green"))
 
     def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)

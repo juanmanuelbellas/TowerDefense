@@ -18,3 +18,13 @@ class MainTower(Entity):
 
     def update(self):
         pass
+
+
+class Tower(Entity):
+    def __init__(self,hit_points, color, x, y):
+        super().__init__(hit_points=hit_points, x=x, y=y)
+        self.color = color
+        self.width = 100
+        self.height = 100
+        self.hit_points = hit_points
+

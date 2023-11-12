@@ -4,11 +4,15 @@ import uuid
 
 
 class Entity():
-    def __init__(self, hit_points, x, y) -> None:
+    def __init__(self, hit_points, x, y, w=100, h=100):
         self.uuid = uuid.uuid4()
         self.hit_points = hit_points
         self.x = x
         self.y = y
+        self.width = w
+        self.height = h
+        self.is_new = True
+        self.is_mod = False
 
 
     def calc_distance_between (self,A,B):

@@ -1,9 +1,10 @@
 import pygame
 import uuid
 
-from connection import Client, EntityToSend
+from connection import Client
 from events.input import ClickEvent
 from entities.enemies import EnemyFactory
+from entities.towers import Tower
 
 
 class Game:
@@ -14,7 +15,7 @@ class Game:
 
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.connection = Client("127.0.0.1", 1234)
+        self.connection = Client("127.0.0.1", 7173)
         self.entities = []
         self.entities_to_send = []
 
@@ -26,11 +27,11 @@ class Game:
                 self.connection.close()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                self.entities_to_send.append(EntityToSend(x,y,100,100, color="green"))
+                self.entities_to_send.append(Tower(x=x,y=y,hit_points=100, color="blue"))
 
     def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
-        color = "red"
+        color = entity.color 
         pygame.draw.rect(self.screen, color, rect, border_radius=15)
 
     def render(self):

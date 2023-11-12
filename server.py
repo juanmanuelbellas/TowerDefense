@@ -2,12 +2,14 @@ import socket
 import pickle
 import threading
 
-from connection import EntityToSend
+from entities.enemies import Enemy, EnemyFactory
+
+from entities.entity import Entity
 
 
 # Configuración del servidor
 host = "0.0.0.0"
-port = 1234
+port = 7173
 
 # Inicializa el socket del servidor
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,11 +25,13 @@ def serialize(data):
 
 class GameServer:
 
-    def __init__(self):
+    def __init__(self):\
+        
         self.entities=[]
         self.entities_recieved = []
         self.entities_to_send = []
-    
+        self.new_entity(EnemyFactory.create_enemy(self, "goblin", 200, 200))
+
     def new_entity(self,entity):
         entity.is_new = False
         
@@ -44,6 +48,8 @@ class GameServer:
                 e.height = entity.height
                 e.color = entity.color
                 e.is_mod = False
+                e.is_new = entity.is_new
+                e.hit_points = entity.hit_points
             else:
                 print(f"Entidad no encontrada")
     

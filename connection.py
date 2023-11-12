@@ -48,15 +48,3 @@ class Client:
 
 
 
-class EntityToSend:
-    def __init__(self,x,y,w,h,color):
-        self.x = x
-        self.y = y
-        self.width = w
-        self.height = h
-        self.is_new = True
-        self.is_mod = False
-        self.color = color
-        self.uuid = uuid.uuid4
-
-

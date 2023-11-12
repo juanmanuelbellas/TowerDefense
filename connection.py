@@ -21,15 +21,19 @@ class Client:
         recieve_thread.start()
 
     def listen(self):
-        try:
-            data = self.client_socket.recv(1024)
+        while True:
+            try:
+                data = self.client_socket.recv(1024)
 
-            received_object = pickle.loads(data)
-            self.entities.append(received_object)
-        except Exception as e:
-            print(f"Error al recibir objetos: {str(e)}")
+                received_object = pickle.loads(data)
+                for e in received_object:
+                    
+                    self.entities.append(e)
+                    print(f"Entidad recibida")
+            except Exception as e:
+                print(f"Error al recibir objetos: {str(e)}")
 
-    def send(self, data):
+    def send_entities(self, data):
         # Objeto Python que se enviará al servidor
         data_to_send = data
         # Serializa el objeto Python

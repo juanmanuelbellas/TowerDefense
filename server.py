@@ -34,19 +34,16 @@ class Entity:
 clients = []
 # Function to handle each client
 def handle_client(client_socket):
-    def send(what):
-        data_to_send = what
-
-        serialized_data = pickle.dumps(data_to_send)
-        
-
-        
-        for c in clients:
-            c.send(serialized_data)
+    def serialize(data):
+        data_to_send = data
+        return pickle.dumps(data_to_send)
 
     def update():
-        for entity in game.entities_recieved:
-            send(entity)
+        for c in clients:
+            for e in game.entities_recieved:
+                data = serialize(game.entities_recieved)
+                c.send(data)
+                print(f"Entidades enviadas")
 
     def load_object(entities_recieved):
         for entity_recieved in game.entities_recieved:
@@ -76,6 +73,7 @@ def handle_client(client_socket):
         
         update()
     
+    clients.remove(client_socket)
     client_socket.close()
    
 # Accept incoming connections and spawn a thread for each client

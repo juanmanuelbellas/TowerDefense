@@ -22,7 +22,6 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
         self.connection = Client("167.56.242.96", 27960)
-        self.events = []
         self.entities = []
         self.entities_to_send = []
 
@@ -50,18 +49,20 @@ class Game:
         pygame.display.flip()
 
 
-    def send(self):
+    def send_entities(self):
         if len(self.entities_to_send) >= 1:
             for entity in self.entities_to_send:
-                self.connection.send(entity)
+                self.connection.send_entities(entity)
                 self.entities_to_send.remove(entity)
    
+    def update_from_connection(self):
+        self.entities = self.connection.entities
 
     def run(self):
         while self.running:
-            self.entities = self.connection.entities
+            self.update_from_connection()
             self.handle_input()
-            self.send()
+            self.send_entities()
             self.render()
             
 

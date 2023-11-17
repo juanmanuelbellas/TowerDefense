@@ -52,9 +52,17 @@ class Game:
     def update_from_connection(self):
         self.entities = self.connection.entities
 
+    def orc_affect_health(self):
+        for entity in self.entities:
+            if entity.type == "orc":
+                entity.hit_points+=1
+                entity.is_mod = True
+                entities_to_send.append(entity)
+
     def run(self):
         while self.running:
             self.update_from_connection()
+            self.orc_affect_health()
             self.handle_input()
             self.send_entities()
             self.render()

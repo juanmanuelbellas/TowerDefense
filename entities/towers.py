@@ -22,7 +22,7 @@ class MainTower(Entity):
 
 class Tower(Entity):
     def __init__(self,hit_points, color, x, y):
-        super().__init__(hit_points=hit_points, x=x, y=y)
+        super().__init__(hit_points=hit_points, x=x, y=y, type="tower")
         self.color = color
         self.width = 100
         self.height = 100

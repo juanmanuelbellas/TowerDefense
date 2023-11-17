@@ -30,7 +30,7 @@ class GameServer:
         self.entities=[]
         self.entities_recieved = []
         self.entities_to_send = []
-        self.new_entity(EnemyFactory.create_enemy(self, "goblin", 200, 200))
+        self.new_entity(EnemyFactory.create_enemy("orc", 200, 200))
 
     def new_entity(self,entity):
         entity.is_new = False
@@ -50,6 +50,8 @@ class GameServer:
                 e.is_mod = False
                 e.is_new = entity.is_new
                 e.hit_points = entity.hit_points
+                
+                print(f"Entidad modificada {entity.hit_points} {entity.uuid} ")
             else:
                 print(f"Entidad no encontrada")
     
@@ -67,29 +69,16 @@ class GameServer:
             print(f"Entidades enviadas")
         self.entities_to_send = [];
 
+    def send_all_entities(self, client):
+        print(clients)
+        data = serialize(self.entities)
+        client.send(data)
+        print(f"Todas las entidades enviadas")
+
 game = GameServer()
 
-
-
-class Entity:
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.uuid = uuid
 # Function to handle each client
 def handle_client(client_socket):
-
-    def load_object(entities_recieved):
-        for entity_recieved in game.entities_recieved:
-            for entity in game.entities:
-                if entity.uuid == entity_recieved.uuid:
-                    entity.x = entity_recieved.x
-                    entity.y = entity_recieved.y
-                    entity.width = entity.width
-                    entity.height = entity.height
-                else:
-                    game.entities.append(entity_recieved)
-            
                      
     while True:
      # Receive the serialized data
@@ -116,6 +105,7 @@ try:
         client, addr = server_socket.accept()
         print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
         clients.append(client)
+        game.send_all_entities(client)
         # Create a new thread for each client
         client_thread = threading.Thread(target=handle_client, args=(client,))
         client_thread.start()

@@ -1,20 +1,11 @@
 import socket
 import pickle
 import threading
+import time
 
 from entities.enemies import Enemy, EnemyFactory
 
 from entities.entity import Entity
-
-
-# Configuración del servidor
-host = "0.0.0.0"
-port = 7173
-
-# Inicializa el socket del servidor
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((host, port))
-server_socket.listen(5)
 
 
 clients = []
@@ -23,15 +14,61 @@ def serialize(data):
     data_to_send = data
     return pickle.dumps(data_to_send)
 
+class ConnectionServer:
+    def __init__(self, host, port):
+       # Configuración del servidor
+        self.host = host
+        self.port = port
+        self.start_server()
+
+    def start_server(self):
+        # Inicializa el socket del servidor
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.bind((self.host, self.port))
+        self.server_socket.listen(5)
+
+
+
+
 class GameServer:
 
-    def __init__(self):\
-        
+    def __init__(self):
+        #self.time_started = time.time()
         self.entities=[]
         self.entities_recieved = []
         self.entities_to_send = []
         self.new_entity(EnemyFactory.create_enemy("orc", 200, 200))
+    
+    def remove_entity(self, entity):
+        self.entities.remove(entity)
 
+
+    def collision_handler(self, entity1, entity2):
+            self.remove_entity(entity1)
+            self.remove_entity(entity2)
+            print("Hay colision")
+
+    
+
+    
+
+    def collision_checker(self):
+        def collides_y(entity1,entity2):
+            if entity1.y >= entity2.y - entity2.height or entity1.y + entity1.height > entity2.y:
+                return True
+            return False
+        def collides_x(entity1,entity2):
+            if entity1.x >= entity2.x - entity2.width or entity1.x + entity1.width > entity2.x:
+                return True
+            return False
+        for entity1 in self.entities:
+            for entity2 in self.entities:
+                if entity1.uuid == entity2.uuid:
+                    break
+                if collides_y(entity1, entity2) and collides_x(entity1,entity2):
+                    self.collision_handler(entity1,entity2)
+
+    
     def new_entity(self,entity):
         entity.is_new = False
         
@@ -76,7 +113,7 @@ class GameServer:
         print(f"Todas las entidades enviadas")
 
 game = GameServer()
-
+connection = ConnectionServer(host="127.0.0.1", port=7173)
 # Function to handle each client
 def handle_client(client_socket):
                      
@@ -93,6 +130,7 @@ def handle_client(client_socket):
         # Perform some operation with the received object
         print(f"Objeto recibido del cliente: {received_object}")
         game.handle_recieved_entity(received_object)
+        game.collision_checker()
         
         
     
@@ -102,7 +140,7 @@ def handle_client(client_socket):
 # Accept incoming connections and spawn a thread for each client
 try:
     while True:
-        client, addr = server_socket.accept()
+        client, addr = connection.server_socket.accept()
         print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
         clients.append(client)
         game.send_all_entities(client)

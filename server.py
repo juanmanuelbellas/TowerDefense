@@ -49,22 +49,18 @@ class GameServer:
         print("Hay colision")
 
     def collision_checker(self):
-        def collides_y(entity1, entity2):
-            if entity1.y <= entity2.y + entity2.height and entity1.y + entity1.height >= entity2.y:
-                return True
-            return False
-
-        def collides_x(entity1, entity2):
-            if entity1.x >= entity2.x + entity2.width and entity1.x + entity1.width >= entity2.x:
-                return True
-            return False
+        collision = False
         for entity1 in self.entities:
             for entity2 in self.entities:
-                if entity1.uuid == entity2.uuid:
-                    break
-                if collides_y(entity1, entity2) and collides_x(entity1, entity2):
-                    if entity1 and entity2:
-                        self.collision_handler(entity1, entity2)
+                if entity1.uuid != entity2.uuid:
+                    if (entity1.x < entity2.x + entity2.width and
+                        entity1.x + entity1.width > entity2.x and
+                        entity1.y < entity2.y + entity2.height and
+                            entity1.y + entity1.height > entity2.y):
+                        collision = True
+
+            if collision:
+                self.collision_handler(entity1, entity2)
 
     def new_entity(self, entity):
         entity.is_new = False

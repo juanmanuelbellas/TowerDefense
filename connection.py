@@ -2,16 +2,20 @@ import socket
 import pickle
 import uuid
 import threading
+
+
 class GameServer:
     def __init__(self):
         self.entities = []
+
+
 class Client:
     def __init__(self, host, port):
         self.host = host
         self.port = port
         self.entities = []
-        
-        self.received_game = GameServer()      
+
+        self.received_game = GameServer()
 # Inicializa el socket del cliente
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((host, port))
@@ -24,13 +28,11 @@ class Client:
     def listen(self):
         while True:
             try:
-                data = self.client_socket.recv(1024)
-
+                data = self.client_socket.recv(4096)
                 received_object = pickle.loads(data)
-                for e in received_object:
-                    
-                    self.entities.append(e)
-                    print(f"Entidad recibida")
+
+                self.entities = received_object
+                print(f"Entidad recibida")
             except Exception as e:
                 print(f"Error al recibir objetos: {str(e)}")
 
@@ -45,6 +47,3 @@ class Client:
     # Cierra la conexión
     def close(self):
         self.client_socket.close()
-
-
-

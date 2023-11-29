@@ -25,12 +25,10 @@ class Client:
         while True:
             try:
                 data = self.client_socket.recv(1024)
-
                 received_object = pickle.loads(data)
-                for e in received_object:
-                    
-                    self.entities.append(e)
-                    print(f"Entidad recibida")
+                
+                self.entities.append(received_object)
+                print(f"Entidad recibida")
             except Exception as e:
                 print(f"Error al recibir objetos: {str(e)}")
 

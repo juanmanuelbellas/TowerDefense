@@ -37,10 +37,11 @@ class GameServer:
         self.entities=[]
         self.entities_recieved = []
         self.entities_to_send = []
-        self.new_entity(EnemyFactory.create_enemy("orc", 200, 200))
+        self.new_entity(EnemyFactory.create_enemy("goblin", 200, 200))
     
     def remove_entity(self, entity):
-        self.entities.remove(entity)
+        if entity:
+            self.entities.remove(entity)
 
 
     def collision_handler(self, entity1, entity2):
@@ -54,11 +55,11 @@ class GameServer:
 
     def collision_checker(self):
         def collides_y(entity1,entity2):
-            if entity1.y >= entity2.y - entity2.height or entity1.y + entity1.height > entity2.y:
+            if entity1.y >= entity2.y + entity2.height and entity1.y + entity1.height >= entity2.y:
                 return True
             return False
         def collides_x(entity1,entity2):
-            if entity1.x >= entity2.x - entity2.width or entity1.x + entity1.width > entity2.x:
+            if entity1.x >= entity2.x + entity2.width and entity1.x + entity1.width >= entity2.x:
                 return True
             return False
         for entity1 in self.entities:
@@ -66,7 +67,8 @@ class GameServer:
                 if entity1.uuid == entity2.uuid:
                     break
                 if collides_y(entity1, entity2) and collides_x(entity1,entity2):
-                    self.collision_handler(entity1,entity2)
+                    if entity1 and entity2:
+                        self.collision_handler(entity1,entity2)
 
     
     def new_entity(self,entity):
@@ -102,14 +104,16 @@ class GameServer:
         print(clients)
         for c in clients:
             data = serialize(self.entities_to_send)
-            c.send(data)
+            #c.send(data)
+            self.send_all_entities(c)
             print(f"Entidades enviadas")
         self.entities_to_send = [];
 
     def send_all_entities(self, client):
         print(clients)
-        data = serialize(self.entities)
-        client.send(data)
+        for entity in self.entities:
+            data = serialize(entity)
+            client.send(data)
         print(f"Todas las entidades enviadas")
 
 game = GameServer()

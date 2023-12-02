@@ -4,6 +4,7 @@ import threading
 import time
 import argparse
 
+from threading import Event
 from entities.enemies import Enemy, EnemyFactory
 from entities.entity import Entity
 
@@ -20,10 +21,12 @@ class ConnectionServer:
 
 class GameServer:
     def __init__(self):
+        self.shutdown_event = Event()
         self.clients = []
 
         self.entities = []
         self.entities.append(EnemyFactory.create_enemy("goblin", 200, 200))
+
 
     def remove_entity(self, entity):
         if entity in self.entities:
@@ -84,19 +87,23 @@ class GameServer:
             self.clients.remove(client_socket)
 
     def start(self, host="127.0.0.1", port=7173):
-        connection = ConnectionServer(host=host, port=port)
+        while not self.shutdown_event.is_set():
+            connection = ConnectionServer(host=host, port=port)
 
-        try:
-            while True:
-                client, addr = connection.server_socket.accept()
-                print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
-                self.clients.append(client)
-                self.send_all_entities(client, self.serialize(self.entities))
-                client_thread = threading.Thread(target=self.handle_client, args=(client, self))
-                client_thread.start()
-        finally:
-            for c in self.clients:
-                c.close()
+            try:
+                while True:
+                    client, addr = connection.server_socket.accept()
+                    print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
+                    self.clients.append(client)
+                    self.send_all_entities(client, self.serialize(self.entities))
+                    client_thread = threading.Thread(target=self.handle_client, args=(client, self))
+                    client_thread.start()
+            finally:
+                for c in self.clients:
+                    c.close()
+    
+    def stop(self):
+        self.shutdown_event.set()
 
 if __name__ == "__main__":
     game_server = GameServer()

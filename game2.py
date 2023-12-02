@@ -26,7 +26,6 @@ class Game:
         self.entities_to_send = []
 
 
-
     def handle_input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -34,21 +33,17 @@ class Game:
                 self.connection.close()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                width=100
-                height=100
-                x = x - width / 2
-                y = y - height / 2
-                self.entities_to_send.append(Tower(width=width,height=height,x=x,y=y,hit_points=100, color="blue"))
+                self.entities_to_send.append(Tower(x=x,y=y,hit_points=100, color="blue"))
     def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
         color = entity.color 
         pygame.draw.rect(self.screen, color, rect, border_radius=15)
 
+
     def render(self):
         self.screen.fill((204, 193, 163))
         for entity in self.entities:
             self.drawRect(entity)
-
 
         pygame.display.flip()
 
@@ -59,8 +54,10 @@ class Game:
                 self.connection.send_entities(entity)
                 self.entities_to_send.remove(entity)
    
+
     def update_from_connection(self):
         self.entities = self.connection.entities
+
 
     def run(self):
         while self.running:
@@ -68,7 +65,11 @@ class Game:
             self.handle_input()
             self.send_entities()
             self.render()
-            
+
+    
+    def stop(self):
+        self.running = False            
+
 
 if __name__ == "__main__":
    game = Game()

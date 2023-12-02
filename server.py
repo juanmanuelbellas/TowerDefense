@@ -2,6 +2,7 @@ import socket
 import pickle
 import threading
 import time
+import argparse
 
 from entities.enemies import Enemy, EnemyFactory
 from entities.entity import Entity
@@ -60,6 +61,7 @@ class GameServer:
         client.send(data)
         print(f"Todas las entidades enviadas")
 
+<<<<<<< HEAD
     @staticmethod
     def serialize(data):
         data_to_send = data
@@ -77,6 +79,18 @@ class GameServer:
             game.collision_checker()
         game.remove_client(client_socket)
         client_socket.close()
+=======
+parser = argparse.ArgumentParser(description="Retrieves arguments from command line.")
+parser.add_argument("--ip", type=str, required=True, help="The IP address")
+parser.add_argument("--port", type=int, required=True, help="The port number")
+args = parser.parse_args()
+
+
+
+game = GameServer()
+connection = ConnectionServer(host=args.ip, port=args.port)
+# Function to handle each client
+>>>>>>> origin/td_mp_launcher_collision
 
     def remove_client(self, client_socket):
         if client_socket in self.clients:

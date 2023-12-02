@@ -25,6 +25,14 @@ class GameServer:
         self.entities = []
         self.entities.append(EnemyFactory.create_enemy("goblin", 200, 200))
 
+    def start(self, ip, port):
+        self.running = True
+        while self.running:
+            pass
+
+    def stop(self):
+        self.running = False
+
     def remove_entity(self, entity):
         if entity in self.entities:
             self.entities.remove(entity)

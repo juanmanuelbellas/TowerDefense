@@ -1,6 +1,7 @@
 import tkinter as tk
 import ipaddress
 import subprocess
+import threading
 from PIL import Image, ImageTk
 from server import GameServer
 class TowerDefenseLauncher(tk.Tk):
@@ -31,6 +32,7 @@ class TowerDefenseLauncher(tk.Tk):
         self.selected_value = tk.IntVar(value=0)
         self.message_label = None
         self.create_widgets()
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def load_background_image(self, image_path):
         """
@@ -55,38 +57,38 @@ class TowerDefenseLauncher(tk.Tk):
         joining or hosting a game.
         """
          # Create a frame for other widgets that will be on top of the background
-        main_frame = tk.Frame(self, bd=1)
-        main_frame.place(relx=0.5, rely=0.5, anchor='center')  # Center the frame
+        self.main_frame = tk.Frame(self, bd=1)
+        self.main_frame.place(relx=0.5, rely=0.5, anchor='center')  # Center the frame
 
 
-        radio_frame = tk.Frame(main_frame)  # Frame for radio buttons
+        radio_frame = tk.Frame(self.main_frame)  # Frame for radio buttons
         radio_frame.pack(pady=(5, 10))
         tk.Radiobutton(radio_frame, text="Attacker", variable=self.selected_value, value=1, command=self.clear_message).pack(side=tk.LEFT)
         tk.Radiobutton(radio_frame, text="Defender", variable=self.selected_value, value=2, command=self.clear_message).pack(side=tk.LEFT)
 
         # IP and Port entries
-        tk.Label(main_frame, text="IP address").pack()
-        self.ip_entry = tk.Entry(main_frame, bg="white", fg="black")
+        tk.Label(self.main_frame, text="IP address").pack()
+        self.ip_entry = tk.Entry(self.main_frame, bg="white", fg="black")
         self.ip_entry.pack(pady=(0, 5))
         self.default_ip = "127.0.0.1"
         self.ip_entry.insert(0, self.default_ip)
         self.ip_entry.bind("<Key>", lambda event: self.clear_message())
 
-        tk.Label(main_frame, text="Port").pack()
-        self.port_entry = tk.Entry(main_frame, bg="white", fg="black")
+        tk.Label(self.main_frame, text="Port").pack()
+        self.port_entry = tk.Entry(self.main_frame, bg="white", fg="black")
         self.port_entry.pack(pady=(0, 0))
         self.default_port = "7173"
         self.port_entry.insert(0, self.default_port)
         self.port_entry.bind("<Key>", lambda event: self.clear_message())
 
         # Buttons
-        button_frame = tk.Frame(main_frame)  # Frame for buttons
+        button_frame = tk.Frame(self.main_frame)  # Frame for buttons
         button_frame.pack(pady=(5, 0))
         tk.Button(button_frame, text="Join", command=self.join_game).pack(side=tk.LEFT, padx=5)
         tk.Button(button_frame, text="Host", command=self.host_game).pack(side=tk.LEFT, padx=5)
        
         # Message label
-        self.message_label = tk.Label(main_frame, fg="red")
+        self.message_label = tk.Label(self.main_frame, fg="red")
         self.message_label.pack()
 
     def is_valid_ip(self, ip):
@@ -155,8 +157,27 @@ class TowerDefenseLauncher(tk.Tk):
         port = self.port_entry.get()
         
         self.server = GameServer()
+        self.server_thread = threading.Thread(target=self.server.start, args=(ip, int(port)))
+        self.server_thread.start()
+
         print(f"Hosting game at IP: {ip}, Port: {port}")
-        self.server.start(ip, int(port))
+
+        # Run the server in a separate thread
+        server_thread = threading.Thread(target=self.server.start, args=(ip, int(port)))
+        server_thread.start()
+
+        # Clear the main frame and update the GUI
+        self.main_frame.destroy()
+
+        host_frame = tk.Frame(self, bd=1)
+        host_frame.place(relx=0.5, rely=0.5, anchor='center')
+        tk.Label(host_frame, text=f"Hosting game at {ip}:{port}").pack()
+
+    def on_close(self):
+        if hasattr(self, "server"):
+            self.server.stop()
+            self.server_thread.join()
+
         self.destroy()
 
 

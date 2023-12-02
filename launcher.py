@@ -68,11 +68,15 @@ class TowerDefenseLauncher(tk.Tk):
         tk.Label(main_frame, text="IP address").pack()
         self.ip_entry = tk.Entry(main_frame, bg="white", fg="black")
         self.ip_entry.pack(pady=(0, 5))
+        self.default_ip = "127.0.0.1"
+        self.ip_entry.insert(0, self.default_ip)
         self.ip_entry.bind("<Key>", lambda event: self.clear_message())
 
         tk.Label(main_frame, text="Port").pack()
         self.port_entry = tk.Entry(main_frame, bg="white", fg="black")
         self.port_entry.pack(pady=(0, 0))
+        self.default_port = "7131"
+        self.port_entry.insert(0, self.default_port)
         self.port_entry.bind("<Key>", lambda event: self.clear_message())
 
         # Buttons

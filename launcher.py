@@ -2,8 +2,12 @@ import tkinter as tk
 import ipaddress
 import subprocess
 import threading
+import signal
+import sys
 from PIL import Image, ImageTk
 from server import GameServer
+
+
 class TowerDefenseLauncher(tk.Tk):
     """
     A Tkinter-based GUI application for launching a tower defense game.
@@ -171,12 +175,14 @@ class TowerDefenseLauncher(tk.Tk):
         tk.Label(host_frame, text=f"Hosting game at {ip}:{port}").pack()
 
     def on_close(self):
-        if hasattr(self, "server"):
+        if hasattr(self, "server"): 
             self.server.stop()
-            self.server_thread.join()
+            self.server_thread.join(timeout=5)
+            if self.server_thread.is_alive():
+                print("Server thread is still running, please manually terminate it.")
 
         self.destroy()
-
+        sys.exit()
 
     def show_message(self, messages):
         """

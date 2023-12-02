@@ -2,6 +2,7 @@ import socket
 import pickle
 import threading
 import time
+import argparse
 
 from entities.enemies import Enemy, EnemyFactory
 
@@ -106,9 +107,15 @@ class GameServer:
         client.send(data)
         print(f"Todas las entidades enviadas")
 
+parser = argparse.ArgumentParser(description="Retrieves arguments from command line.")
+parser.add_argument("--ip", type=str, required=True, help="The IP address")
+parser.add_argument("--port", type=int, required=True, help="The port number")
+args = parser.parse_args()
+
+
 
 game = GameServer()
-connection = ConnectionServer(host="127.0.0.1", port=7173)
+connection = ConnectionServer(host=args.ip, port=args.port)
 # Function to handle each client
 
 

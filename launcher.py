@@ -1,5 +1,6 @@
 import tkinter as tk
 import ipaddress
+import subprocess
 from PIL import Image, ImageTk
 
 class TowerDefenseLauncher(tk.Tk):
@@ -65,12 +66,12 @@ class TowerDefenseLauncher(tk.Tk):
 
         # IP and Port entries
         tk.Label(main_frame, text="IP address").pack()
-        self.ip_entry = tk.Entry(main_frame, bg="white")
+        self.ip_entry = tk.Entry(main_frame, bg="white", fg="black")
         self.ip_entry.pack(pady=(0, 5))
         self.ip_entry.bind("<Key>", lambda event: self.clear_message())
 
         tk.Label(main_frame, text="Port").pack()
-        self.port_entry = tk.Entry(main_frame, bg="white")
+        self.port_entry = tk.Entry(main_frame, bg="white", fg="black")
         self.port_entry.pack(pady=(0, 0))
         self.port_entry.bind("<Key>", lambda event: self.clear_message())
 
@@ -138,6 +139,8 @@ class TowerDefenseLauncher(tk.Tk):
         ip = self.ip_entry.get()
         port = self.port_entry.get()
         print(f"Joining game at IP: {ip}, Port: {port}")
+        subprocess.Popen(["python3", "game2.py", "--ip", ip, "--port",  port])  
+
 
     def host_game(self):
         if not self.validate_inputs():
@@ -145,7 +148,11 @@ class TowerDefenseLauncher(tk.Tk):
         # Add logic for hosting a game
         ip = self.ip_entry.get()
         port = self.port_entry.get()
+
         print(f"Hosting game at IP: {ip}, Port: {port}")
+
+        subprocess.Popen(["python3", "server.py", "--ip", ip, "--port",  port])
+        subprocess.Popen(["python3", "game2.py", "--ip", ip, "--port",  port])  
 
     def show_message(self, messages):
         """

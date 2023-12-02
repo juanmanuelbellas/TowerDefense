@@ -17,6 +17,7 @@ class Entity():
         self.target = None
         self.vx = 0
         self.vy = 0
+        self.speed = 1
 
 
     def calc_distance_between (self,A,B):
@@ -36,17 +37,28 @@ class Entity():
         A.hit_points = A.hit_points-damage
 
     
-    def get_closer_entity(self):
-        return Entity(hit_points=1,x=100,y=100)
 
-    def set_speed(self, target):
-        self.vx = 10
-        self.vy = 10
+    def set_velocity(self, target):
+        if self.can_move and self.speed > 0:
+            self.distance_to_target = math.sqrt(
+                pow((self.x - self.target.x), 2)+pow((self.y - self.target.y), 2))
+            time_to_reach = self.distance_to_target / self.speed
+            self.vx = (self.target.x - self.x) / time_to_reach
+            self.vy = (self.target.y - self.y) / time_to_reach
 
-    def seek_target(self):
-        self.target = self.get_closer_entity()
-        self.set_speed(self.target)
+    def set_target(self,target):
+        if target:
+            self.target = target
+            self.set_velocity(self.target)
+    
+    def stop_movement(self):
+        self.vx = 0
+        self.vy = 0
 
+
+    def set_no_target(self):
+        self.target = None
+        self.stop_movement()
 
     def move(self):
         self.x = self.x + self.vx
@@ -54,4 +66,10 @@ class Entity():
     
     def update(self):
         self.move()
-        self.seek_target()
+
+
+
+class Tower(Entity):
+    def __init__(self, hit_points, x, y, w=100, h=100, type="tower"):
+        super.__init__(self, hit_points, x, y, w, h, type)
+        self.speed = 0

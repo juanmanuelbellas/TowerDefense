@@ -4,6 +4,7 @@ import threading
 import time
 import argparse
 import pygame
+import math
 
 from entities.enemies import Enemy, EnemyFactory
 from entities.entity import Entity
@@ -47,6 +48,24 @@ class GameServer:
         self.remove_entity(entity2)
         print("Hay colision")
         self.update()
+    
+    def calc_distance_between (self,A,B):
+        distancia = math.sqrt(
+            pow((A.x - B.x), 2)+pow((A.y - B.y), 2))
+        return distancia
+
+    def target_setter(self,entity1):
+        potential_targets = []
+        distances = []
+        if len(self.entities) > 0:
+            for entity2 in self.entities:
+                if entity1.team != entity2.team:
+                    potential_targets.append(entity2)
+                    distances.append(self.calc_distance_between(entity1,entity2))
+            if len(potential_targets) > 0:
+                entity1.set_target(potential_targets[distances.index(min(distances))])
+            else:
+                entity1.set_no_target()
 
     def collision_checker(self):
         for i, entity1 in enumerate(self.entities):
@@ -64,6 +83,7 @@ class GameServer:
 
     def update_entities(self):
         for entity in self.entities:
+            self.target_setter(entity)
             entity.update()
     
     def update(self):

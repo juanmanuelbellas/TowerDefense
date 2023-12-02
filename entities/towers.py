@@ -27,4 +27,6 @@ class Tower(Entity):
         self.width = width
         self.height = height
         self.hit_points = hit_points
+        self.can_move = False
+        self.team = 'd'
 

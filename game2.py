@@ -40,6 +40,15 @@ class Game:
                 x = x - width / 2
                 y = y - height / 2
                 self.entities_to_send.append(Tower(width=width,height=height,x=x,y=y,hit_points=100, color="blue"))
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
+                x, y = pygame.mouse.get_pos()
+                width=50
+                height=50
+                x = x - width / 2
+                y = y - height / 2
+                self.entities_to_send.append(EnemyFactory.create_enemy('troll', x=x, y=y))
+
+
     def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
         color = entity.color 

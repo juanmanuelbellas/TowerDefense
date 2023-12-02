@@ -21,10 +21,10 @@ class MainTower(Entity):
 
 
 class Tower(Entity):
-    def __init__(self,hit_points, color, x, y):
+    def __init__(self,hit_points, color, x, y, width, height):
         super().__init__(hit_points=hit_points, x=x, y=y, type="tower")
         self.color = color
-        self.width = 100
-        self.height = 100
+        self.width = width
+        self.height = height
         self.hit_points = hit_points
 

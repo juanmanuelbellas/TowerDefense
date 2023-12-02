@@ -82,6 +82,7 @@ class GameServer:
         self.update()
 
     def update_entities(self):
+        self.collision_checker()
         for entity in self.entities:
             self.target_setter(entity)
             entity.update()
@@ -119,12 +120,13 @@ class GameServer:
     def handle_client(client_socket, game):
         while True:
             data = client_socket.recv(2048 * 128)
+            
             if not data:
                 break
             received_object = pickle.loads(data)
             print(f"Objeto recibido del cliente: {received_object}")
             game.handle_recieved_entity(received_object)
-            game.collision_checker()
+           
         game.remove_client(client_socket)
         client_socket.close()
 

@@ -10,10 +10,11 @@ class GameServer:
 
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, host, port, clock):
         self.host = host
         self.port = port
         self.entities = []
+        self.clock = clock
 
         self.received_game = GameServer()
 # Inicializa el socket del cliente
@@ -28,6 +29,7 @@ class Client:
     def listen(self):
         while True:
             try:
+                self.clock.tick(60)
                 data = self.client_socket.recv(4096)
                 received_object = pickle.loads(data)
 

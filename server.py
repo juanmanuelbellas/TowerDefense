@@ -3,9 +3,20 @@ import pickle
 import threading
 import time
 import argparse
+import pygame
 
 from entities.enemies import Enemy, EnemyFactory
 from entities.entity import Entity
+
+
+class Client:
+    def __init__(self, connection):
+        self.display_y = 0
+        self.display_x = 0
+        self.display_width = 800
+        self.display_height = 600
+        self.connection = connection
+        self.entities_to_send = []
 
 class ConnectionServer:
     def __init__(self, host, port):
@@ -21,6 +32,8 @@ class ConnectionServer:
 class GameServer:
     def __init__(self):
         self.clients = []
+
+        self.clock = pygame.time.Clock()
 
         self.entities = []
         self.entities.append(EnemyFactory.create_enemy("goblin", 200, 200))
@@ -49,17 +62,33 @@ class GameServer:
         self.entities.append(entity)
         self.update()
 
+    def update_entities(self):
+        for entity in self.entities:
+            entity.update()
+    
     def update(self):
-        print(self.clients)
+        self.update_entities()
         for c in self.clients:
             data = self.serialize(self.entities)
-            self.send_all_entities(c, data)
-            print(f"Entidades enviadas")
+            self.send_all_entities(c)
+            
+    
+    def get_entities_in_view(self,client):
+        result = []
+        for e in self.entities:
+            if (e.x < client.display_x + client.display_width and
+                e.x + e.width > client.display_x and
+                e.y < client.display_y + client.display_height and
+                e.y + e.height > client.display_y):
+                    result.append(e)
+        return result
 
-    def send_all_entities(self, client, data):
-        print(self.clients)
-        client.send(data)
-        print(f"Todas las entidades enviadas")
+    def send_all_entities(self, client):
+        client.entities_to_send = self.get_entities_in_view(client)
+        if client.entities_to_send:
+            data = self.serialize(client.entities_to_send)
+            client.connection.send(data)
+            print(f"Todas las entidades enviadas")
 
     @staticmethod
     def serialize(data):
@@ -82,21 +111,31 @@ class GameServer:
     def remove_client(self, client_socket):
         if client_socket in self.clients:
             self.clients.remove(client_socket)
+    
+    def game_loop(self):
+        while True:
+            self.update()
+            self.clock.tick(60)
+
 
     def start(self, host="127.0.0.1", port=7173):
         connection = ConnectionServer(host=host, port=port)
-
+        game_thread = threading.Thread(target=self.game_loop)
+        game_thread.start()
         try:
             while True:
                 client, addr = connection.server_socket.accept()
                 print(f"Conexión aceptada desde {addr[0]}:{addr[1]}")
-                self.clients.append(client)
-                self.send_all_entities(client, self.serialize(self.entities))
+                
+                c = Client(client)
+                self.clients.append(c)
+                self.send_all_entities(c)
+
                 client_thread = threading.Thread(target=self.handle_client, args=(client, self))
                 client_thread.start()
         finally:
             for c in self.clients:
-                c.close()
+                c.connection.close()
 
 if __name__ == "__main__":
     game_server = GameServer()

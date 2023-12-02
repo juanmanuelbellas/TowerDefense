@@ -13,6 +13,7 @@ class Game:
         self.running = True
         self.screen_width = 800
         self.screen_height = 600
+        self.clock = pygame.time.Clock()
 
         self.parser = argparse.ArgumentParser(description="Retrieves arguments from command line.")
         self.parser.add_argument("--ip", type=str, required=True, help="The IP address")
@@ -21,7 +22,7 @@ class Game:
         
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.connection = Client(self.args.ip, self.args.port)
+        self.connection = Client(self.args.ip, self.args.port, clock=self.clock)
         self.entities = []
         self.entities_to_send = []
 
@@ -68,6 +69,7 @@ class Game:
             self.handle_input()
             self.send_entities()
             self.render()
+            self.clock.tick(60)
             
 
 if __name__ == "__main__":

@@ -144,6 +144,7 @@ class TowerDefenseLauncher(tk.Tk):
         port = self.port_entry.get()
         print(f"Joining game at IP: {ip}, Port: {port}")
         subprocess.Popen(["python3", "game2.py", "--ip", ip, "--port",  port])  
+        self.destroy()
 
 
     def host_game(self):
@@ -154,8 +155,9 @@ class TowerDefenseLauncher(tk.Tk):
         port = self.port_entry.get()
         
         self.server = GameServer()
-        self.server.start(ip, int(port))
         print(f"Hosting game at IP: {ip}, Port: {port}")
+        self.server.start(ip, int(port))
+        self.destroy()
 
 
     def show_message(self, messages):

@@ -47,11 +47,10 @@ class GameServer:
         self.remove_entity(entity1)
         self.remove_entity(entity2)
         print("Hay colision")
-        self.update()
     
     def calc_distance_between (self,A,B):
         distancia = math.sqrt(
-            pow((A.x - B.x), 2)+pow((A.y - B.y), 2))
+            pow((A.c_x - B.c_x), 2)+pow((A.c_y - B.c_y), 2))
         return distancia
 
     def target_setter(self,entity1):
@@ -82,10 +81,10 @@ class GameServer:
         self.update()
 
     def update_entities(self):
-        self.collision_checker()
         for entity in self.entities:
             self.target_setter(entity)
             entity.update()
+        self.collision_checker()
     
     def update(self):
         self.update_entities()
@@ -106,10 +105,9 @@ class GameServer:
 
     def send_all_entities(self, client):
         client.entities_to_send = self.get_entities_in_view(client)
-        if client.entities_to_send:
-            data = self.serialize(client.entities_to_send)
-            client.connection.send(data)
-            print(f"Todas las entidades enviadas")
+        data = self.serialize(client.entities_to_send)
+        client.connection.send(data)
+        print(f"Todas las entidades enviadas")
 
     @staticmethod
     def serialize(data):

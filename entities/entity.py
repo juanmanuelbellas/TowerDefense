@@ -18,6 +18,7 @@ class Entity():
         self.vx = 0
         self.vy = 0
         self.speed = 1
+        self.set_center()
 
 
     def calc_distance_between (self,A,B):
@@ -37,15 +38,18 @@ class Entity():
         A.hit_points = A.hit_points-damage
 
     
+    def set_center(self):
+        self.c_x = self.x + self.width / 2
+        self.c_y = self.y + self.height / 2
 
     def set_velocity(self, target):
         if self.can_move and self.speed > 0:
             self.distance_to_target = math.sqrt(
-                pow((self.x - self.target.x), 2)+pow((self.y - self.target.y), 2))
+                pow((self.c_x - self.target.c_x), 2)+pow((self.c_y - self.target.c_y), 2))
             time_to_reach = self.distance_to_target / self.speed
             if time_to_reach > 0:
-                self.vx = (self.target.x - self.x) / time_to_reach
-                self.vy = (self.target.y - self.y) / time_to_reach
+                self.vx = (self.target.c_x - self.c_x) / time_to_reach
+                self.vy = (self.target.c_y - self.c_y) / time_to_reach
 
     def set_target(self,target):
         if target:
@@ -64,6 +68,7 @@ class Entity():
     def move(self):
         self.x = self.x + self.vx
         self.y = self.y + self.vy
+        self.set_center()
     
     def update(self):
         self.move()

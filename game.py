@@ -6,9 +6,10 @@ from entities.enemies import Enemy
 
 # Define your classes here
 class Game:
-    def __init__(self, width, height):
+    def __init__(self, width, height, tileSize):
         self.width = width
         self.height = height
+        self.tileSize = tileSize
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.ticks=pygame.time.get_ticks()
@@ -132,5 +133,5 @@ class Game:
 
 # Run the game loop
 if __name__ == "__main__":
-    game = Game(1280, 720)
+    game = Game(1280, 720, tileSize=40)
     game.run()

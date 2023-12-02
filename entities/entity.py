@@ -1,12 +1,19 @@
 import pygame
 import math
+import uuid
 
 
 class Entity():
-    def __init__(self, life_points, x, y) -> None:
-        self.life_points = life_points
+    def __init__(self, hit_points, x, y, w=100, h=100, type="tower"):
+        self.uuid = uuid.uuid4()
+        self.hit_points = hit_points
         self.x = x
         self.y = y
+        self.width = w
+        self.height = h
+        self.is_new = True
+        self.is_mod = False
+        self.type = type
 
 
     def calc_distance_between (self,A,B):
@@ -15,7 +22,7 @@ class Entity():
         return distancia
     
     def MasCercano(self,A,B):
-        Target=Entity(life_points=1,x=1000000,y=1000000)
+        Target=Entity(hit_points=1,x=1000000,y=1000000)
         for b in B:
             if self.calc_distance_between(A,b)<self.calc_distance_between(A,Target):
                 Target=b
@@ -23,4 +30,4 @@ class Entity():
         return Target
 
     def Getdamage(self,A,damage):
-        A.life_points = A.life_points-damage
+        A.hit_points = A.hit_points-damage

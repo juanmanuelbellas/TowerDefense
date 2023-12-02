@@ -34,7 +34,11 @@ class Game:
                 self.connection.close()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = pygame.mouse.get_pos()
-                self.entities_to_send.append(Tower(x=x,y=y,hit_points=100, color="blue"))
+                width=100
+                height=100
+                x = x - width / 2
+                y = y - height / 2
+                self.entities_to_send.append(Tower(width=width,height=height,x=x,y=y,hit_points=100, color="blue"))
     def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
         color = entity.color 

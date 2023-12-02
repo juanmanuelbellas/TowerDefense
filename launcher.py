@@ -75,7 +75,7 @@ class TowerDefenseLauncher(tk.Tk):
         tk.Label(main_frame, text="Port").pack()
         self.port_entry = tk.Entry(main_frame, bg="white", fg="black")
         self.port_entry.pack(pady=(0, 0))
-        self.default_port = "7131"
+        self.default_port = "7173"
         self.port_entry.insert(0, self.default_port)
         self.port_entry.bind("<Key>", lambda event: self.clear_message())
 

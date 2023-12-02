@@ -43,8 +43,9 @@ class Entity():
             self.distance_to_target = math.sqrt(
                 pow((self.x - self.target.x), 2)+pow((self.y - self.target.y), 2))
             time_to_reach = self.distance_to_target / self.speed
-            self.vx = (self.target.x - self.x) / time_to_reach
-            self.vy = (self.target.y - self.y) / time_to_reach
+            if time_to_reach > 0:
+                self.vx = (self.target.x - self.x) / time_to_reach
+                self.vy = (self.target.y - self.y) / time_to_reach
 
     def set_target(self,target):
         if target:

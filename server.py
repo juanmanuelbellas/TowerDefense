@@ -118,7 +118,7 @@ class GameServer:
     @staticmethod
     def handle_client(client_socket, game):
         while True:
-            data = client_socket.recv(4096)
+            data = client_socket.recv(2048 * 128)
             if not data:
                 break
             received_object = pickle.loads(data)
@@ -153,6 +153,7 @@ class GameServer:
 
                 client_thread = threading.Thread(target=self.handle_client, args=(client, self))
                 client_thread.start()
+                self.clock.tick(60)
         finally:
             for c in self.clients:
                 c.connection.close()

@@ -29,12 +29,10 @@ class Client:
     def listen(self):
         while True:
             try:
-                self.clock.tick(60)
-                data = self.client_socket.recv(4096)
+                data = self.client_socket.recv(2048 * 256)
                 received_object = pickle.loads(data)
-
                 self.entities = received_object
-                print(f"Entidad recibida")
+                print(f"Entidades recibidas")
             except Exception as e:
                 print(f"Error al recibir objetos: {str(e)}")
 

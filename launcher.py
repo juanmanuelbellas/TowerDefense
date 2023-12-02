@@ -156,15 +156,12 @@ class TowerDefenseLauncher(tk.Tk):
         ip = self.ip_entry.get()
         port = self.port_entry.get()
         
+        # Run the server in a separate thread
         self.server = GameServer()
         self.server_thread = threading.Thread(target=self.server.start, args=(ip, int(port)))
         self.server_thread.start()
 
         print(f"Hosting game at IP: {ip}, Port: {port}")
-
-        # Run the server in a separate thread
-        server_thread = threading.Thread(target=self.server.start, args=(ip, int(port)))
-        server_thread.start()
 
         # Clear the main frame and update the GUI
         self.main_frame.destroy()

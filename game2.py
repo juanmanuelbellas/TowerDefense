@@ -13,6 +13,7 @@ class Game:
         self.running = True
         self.screen_width = 800
         self.screen_height = 600
+        self.clock = pygame.time.Clock()
 
         self.parser = argparse.ArgumentParser(description="Retrieves arguments from command line.")
         self.parser.add_argument("--ip", type=str, required=True, help="The IP address")
@@ -21,7 +22,7 @@ class Game:
         
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-        self.connection = Client(self.args.ip, self.args.port)
+        self.connection = Client(self.args.ip, self.args.port, clock=self.clock)
         self.entities = []
         self.entities_to_send = []
 
@@ -39,6 +40,15 @@ class Game:
                 x = x - width / 2
                 y = y - height / 2
                 self.entities_to_send.append(Tower(width=width,height=height,x=x,y=y,hit_points=100, color="blue"))
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
+                x, y = pygame.mouse.get_pos()
+                width=50
+                height=50
+                x = x - width / 2
+                y = y - height / 2
+                self.entities_to_send.append(EnemyFactory.create_enemy('troll', x=x, y=y))
+
+
     def drawRect(self, entity):
         rect = pygame.Rect(entity.x, entity.y, entity.width, entity.height)
         color = entity.color 
@@ -68,6 +78,7 @@ class Game:
             self.handle_input()
             self.send_entities()
             self.render()
+            self.clock.tick(60)
             
 
 if __name__ == "__main__":

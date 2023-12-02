@@ -43,7 +43,8 @@ class Enemy(Entity):
         self.weakness = weakness
         self.cost = cost
         self.level = level
-
+        self.can_move = True
+        self.team = 'a'
 
     def draw(self):
         """

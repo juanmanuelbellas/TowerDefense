@@ -2,7 +2,7 @@ import tkinter as tk
 import ipaddress
 import subprocess
 from PIL import Image, ImageTk
-
+from server import GameServer
 class TowerDefenseLauncher(tk.Tk):
     """
     A Tkinter-based GUI application for launching a tower defense game.
@@ -148,11 +148,11 @@ class TowerDefenseLauncher(tk.Tk):
         # Add logic for hosting a game
         ip = self.ip_entry.get()
         port = self.port_entry.get()
-
+        
+        self.server = GameServer()
+        self.server.start(ip, int(port))
         print(f"Hosting game at IP: {ip}, Port: {port}")
 
-        subprocess.Popen(["python3", "server.py", "--ip", ip, "--port",  port])
-        subprocess.Popen(["python3", "game2.py", "--ip", ip, "--port",  port])  
 
     def show_message(self, messages):
         """
